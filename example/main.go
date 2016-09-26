@@ -9,11 +9,11 @@ package main
 
 import (
 	"flag"
-	googleAuthenticator "google"
+	"googleAuthenticator"
 	"log"
 )
 
-func createSecret(ga *googleAuthenticator.GoogleAuthenticator) string {
+func createSecret(ga *googleAuthenticator.GAuth) string {
 	secret, err := ga.CreateSecret(16)
 	if err != nil {
 		return ""
@@ -21,7 +21,7 @@ func createSecret(ga *googleAuthenticator.GoogleAuthenticator) string {
 	return secret
 }
 
-func getCode(ga *googleAuthenticator.GoogleAuthenticator, secret string) string {
+func getCode(ga *googleAuthenticator.GAuth, secret string) string {
 	code, err := ga.GetCode(secret)
 	if err != nil {
 		return "*"
@@ -29,7 +29,7 @@ func getCode(ga *googleAuthenticator.GoogleAuthenticator, secret string) string 
 	return code
 }
 
-func verifyCode(ga *googleAuthenticator.GoogleAuthenticator, secret, code string) bool {
+func verifyCode(ga *googleAuthenticator.GAuth, secret, code string) bool {
 	// 1:30sec
 	ret, err := ga.VerifyCode(secret, code, 1)
 	if err != nil {
@@ -41,10 +41,11 @@ func verifyCode(ga *googleAuthenticator.GoogleAuthenticator, secret, code string
 func main() {
 	flag.Parse()
 	//secret := flag.Arg(0)
-	//secret := "LC42VPXL3VUMBCAN"
+	secret := "LC42VPXL3VUMBCAN"
 	//secret := "IU7B5Q3VBL55Q645"
-	ga := googleAuthenticator.NewGoogleAuthenticator()
-	//log.Println(getCode(ga, secret))
+	ga := googleAuthenticator.NewGAuth()
+	log.Println(getCode(ga, secret))
+
 	for i := 0; i < 10; i++ {
 		log.Println(createSecret(ga))
 	}

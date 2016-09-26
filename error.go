@@ -10,9 +10,9 @@ package googleAuthenticator
 import "errors"
 
 var (
-	SecretLengthLssErr     = errors.New("secret length lss 6 error")
-	SecretLengthErr        = errors.New("secret length error")
-	PaddingCharCountErr    = errors.New("padding char count error")
-	PaddingCharLocationErr = errors.New("padding char Location error")
-	ParamErr               = errors.New("param error")
+	ErrSecretLengthLss     = errors.New("secret length lss 6 error")
+	ErrSecretLength        = errors.New("secret length error")
+	ErrPaddingCharCount    = errors.New("padding char count error")
+	ErrPaddingCharLocation = errors.New("padding char Location error")
+	ErrParam               = errors.New("param error")
 )
