@@ -8,9 +8,10 @@
 package main
 
 import (
-	"flag"
-	"googleAuthenticator"
-	"log"
+	"fmt"
+	"os"
+
+	"github.com/928799934/googleAuthenticator"
 )
 
 func createSecret(ga *googleAuthenticator.GAuth) string {
@@ -39,14 +40,16 @@ func verifyCode(ga *googleAuthenticator.GAuth, secret, code string) bool {
 }
 
 func main() {
-	flag.Parse()
-	//secret := flag.Arg(0)
-	secret := "LC42VPXL3VUMBCAN"
+	if len(os.Args) != 2 {
+		return
+	}
+	// secret := "LC42VPXL3VUMBCAN"
+	secret := os.Args[1]
 	//secret := "IU7B5Q3VBL55Q645"
 	ga := googleAuthenticator.NewGAuth()
-	log.Println(getCode(ga, secret))
+	fmt.Println(getCode(ga, secret))
 
-	for i := 0; i < 10; i++ {
-		log.Println(createSecret(ga))
-	}
+	// for i := 0; i < 10; i++ {
+	// 	log.Println(createSecret(ga))
+	// }
 }
