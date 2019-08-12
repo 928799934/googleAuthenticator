@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"os"
 
-	"googleAuthenticator"
+	"github.com/haleyrom/googleAuthenticator"
 )
 
 func createSecret(ga *googleAuthenticator.GAuth) string {
