@@ -55,8 +55,9 @@ func (this *GAuth) CreateSecret(lens ...int) (string, error) {
 	default:
 		return "", ErrParam
 	}
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	for i := 0; i < length; i++ {
-		secret = append(secret, Table[rand.Intn(len(Table))])
+		secret = append(secret, Table[r.Intn(len(Table))])
 	}
 	return strings.Join(secret, ""), nil
 }
@@ -64,7 +65,7 @@ func (this *GAuth) CreateSecret(lens ...int) (string, error) {
 // VerifyCode Check if the code is correct. This will accept codes starting from $discrepancy*30sec ago to $discrepancy*30sec from now
 func (this *GAuth) VerifyCode(secret, code string, discrepancy int64) (bool, error) {
 	// now time
-	curTimeSlice := time.Now().Unix() / 30
+	curTimeSlice := time.Now().Local().Unix() / 30
 	for i := -discrepancy; i <= discrepancy; i++ {
 		calculatedCode, err := this.GetCode(secret, curTimeSlice+i)
 		if err != nil {

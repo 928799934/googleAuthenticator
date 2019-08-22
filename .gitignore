@@ -1,0 +1,9 @@
+*.log
+*.tmp
+*.exe
+*.exe~
+*.png
+*.pprof
+.DS_Store
+.idea/
+
