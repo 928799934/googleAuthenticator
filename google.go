@@ -1,10 +1,13 @@
-/*******************************************************
-	File Name: google.go
-	Author: An
-	Mail:lijian@cmcm.com
-	Created Time: 14/11/26 - 10:25:26
-	Modify Time: 14/11/26 - 10:25:26
- *******************************************************/
+/*
+******************************************************
+
+		File Name: google.go
+		Author: An
+		Mail:lijian@cmcm.com
+		Created Time: 14/11/26 - 10:25:26
+		Modify Time: 14/11/26 - 10:25:26
+	 ******************************************************
+*/
 package googleAuthenticator
 
 import (
@@ -19,29 +22,39 @@ import (
 )
 
 type GAuth struct {
-	codeLen float64
-	table   map[string]int
+	codeLenght uint
+	table      []string
+	rnd        *rand.Rand
 }
 
 func NewGAuth() *GAuth {
 	return &GAuth{
-		codeLen: 6,
-		table:   arrayFlip(Table),
+		codeLenght: 6,
+		table:      Table,
+		rnd:        rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
 }
 
 // SetCodeLength Set the code length, should be >=6
-func (this *GAuth) SetCodeLength(length float64) error {
+func (g *GAuth) SetCodeLength(length uint) error {
 	if length < 6 {
 		return ErrSecretLengthLss
 	}
-	this.codeLen = length
+	g.codeLenght = length
+	return nil
+}
+
+func (g *GAuth) SetTable(table []string) error {
+	if len(table) > 0 {
+		return ErrTableLength
+	}
+	g.table = table
 	return nil
 }
 
 // CreateSecret create new secret
 // 16 characters, randomly chosen from the allowed base32 characters.
-func (this *GAuth) CreateSecret(lens ...int) (string, error) {
+func (g *GAuth) CreateSecret(lens ...int) (string, error) {
 	var (
 		length int
 		secret []string
@@ -56,17 +69,17 @@ func (this *GAuth) CreateSecret(lens ...int) (string, error) {
 		return "", ErrParam
 	}
 	for i := 0; i < length; i++ {
-		secret = append(secret, Table[rand.Intn(len(Table))])
+		secret = append(secret, g.table[g.rnd.Intn(len(g.table))])
 	}
 	return strings.Join(secret, ""), nil
 }
 
 // VerifyCode Check if the code is correct. This will accept codes starting from $discrepancy*30sec ago to $discrepancy*30sec from now
-func (this *GAuth) VerifyCode(secret, code string, discrepancy int64) (bool, error) {
+func (g *GAuth) VerifyCode(secret, code string, discrepancy int64) (bool, error) {
 	// now time
 	curTimeSlice := time.Now().Unix() / 30
 	for i := -discrepancy; i <= discrepancy; i++ {
-		calculatedCode, err := this.GetCode(secret, curTimeSlice+i)
+		calculatedCode, err := g.GetCode(secret, curTimeSlice+i)
 		if err != nil {
 			return false, err
 		}
@@ -78,7 +91,7 @@ func (this *GAuth) VerifyCode(secret, code string, discrepancy int64) (bool, err
 }
 
 // GetCode Calculate the code, with given secret and point in time
-func (this *GAuth) GetCode(secret string, timeSlices ...int64) (string, error) {
+func (g *GAuth) GetCode(secret string, timeSlices ...int64) (string, error) {
 	var timeSlice int64
 	switch len(timeSlices) {
 	case 0:
@@ -105,7 +118,7 @@ func (this *GAuth) GetCode(secret string, timeSlices ...int64) (string, error) {
 		return "", err
 	}
 	value = value & 0x7FFFFFFF
-	modulo := int64(math.Pow(10, this.codeLen))
-	format := fmt.Sprintf("%%0%dd", int(this.codeLen))
+	modulo := int64(math.Pow(10, float64(g.codeLenght)))
+	format := fmt.Sprintf("%%0%dd", int(g.codeLenght))
 	return fmt.Sprintf(format, value%modulo), nil
 }
