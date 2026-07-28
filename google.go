@@ -28,6 +28,7 @@ type GAuth struct {
 }
 
 func NewGAuth() *GAuth {
+	rand.Seed(time.Now().UnixNano())
 	return &GAuth{
 		codeLenght: 6,
 		table:      Table,
